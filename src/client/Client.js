@@ -20,6 +20,19 @@ const DataResolver = require('../util/DataResolver');
 const Structures = require('../util/Structures');
 const { Error, TypeError, RangeError } = require('../errors');
 
+function depVersion(name) {
+  try {
+    const pkg = require(`${name}/package.json`);
+    const version = pkg.version;
+    let resolved = pkg._resolved;
+    let output = version;
+    if (resolved) output += ` (${resolved})`;
+    return output;
+  } catch (err) {
+    return false;
+  }
+}
+
 /**
  * The main hub for interacting with the Discord API, and the starting point for any bot.
  * @extends {BaseClient}
@@ -317,6 +330,32 @@ class Client extends BaseClient {
   fetchApplication() {
     return this.api.oauth2.applications('@me').get()
       .then(app => new ClientApplication(this, app));
+  }
+
+  /**
+   * Generates a debug log that can be useful when posting issues on GitHub.
+   * @returns {string}
+   */
+  generateDebugLog() {
+    const pkg = require('../../package.json');
+    const log = [];
+    log.push('='.repeat(80));
+    log.push('META');
+    log.push('-'.repeat(80));
+    log.push(`Version: ${pkg.version}`);
+    log.push(`Browser: ${browser}`);
+    log.push('\nDEPENDENCIES');
+    log.push('-'.repeat(80));
+    for (const dep of [
+      ...Object.keys(pkg.dependencies),
+      ...Object.keys(pkg.peerDependencies),
+      'node-opus',
+      'opusscript',
+    ]) {
+      log.push(`${dep}: ${depVersion(dep)}`);
+    }
+    log.push('='.repeat(80));
+    return log.join('\n');
   }
 
   /**
