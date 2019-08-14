@@ -15,7 +15,7 @@ const UserStore = require('../stores/UserStore');
 const ChannelStore = require('../stores/ChannelStore');
 const GuildStore = require('../stores/GuildStore');
 const GuildEmojiStore = require('../stores/GuildEmojiStore');
-const { Events, browser, DefaultOptions } = require('../util/Constants');
+const { Status, Events, browser, DefaultOptions } = require('../util/Constants');
 const DataResolver = require('../util/DataResolver');
 const Structures = require('../util/Structures');
 const { Error, TypeError, RangeError } = require('../errors');
@@ -340,12 +340,27 @@ class Client extends BaseClient {
     const pkg = require('../../package.json');
     const log = [];
     log.push('='.repeat(80));
-    log.push('META');
+    log.push('DEBUG LOG');
     log.push('-'.repeat(80));
-    log.push(`Version: ${pkg.version}`);
-    log.push(`Browser: ${browser}`);
+    log.push(`Guilds: ${this.guilds.size} (${this.guilds.filter(guild => guild.available).size} available)`);
+    log.push(`Channels: ${this.channels.size}`);
+    log.push(`Users: ${this.users.size}`);
+    log.push(`Uptime: ${this.uptime}ms\n`);
+
+    if (!browser) {
+      log.push(`Memory Usage: ${JSON.stringify(process.memoryUsage())}\n`);
+    }
+
+    log.push(`Gateway: ${this.ws.gateway}`);
+    for (const [id, shard] of this.ws.shards.entries()) {
+      const status = Object.entries(Status).find(entry => entry[1] === shard.status)[0];
+      log.push(`Shard ${id}: ${status} (ping: ${shard.ping}ms)`);
+    }
+
     log.push('\nDEPENDENCIES');
     log.push('-'.repeat(80));
+    log.push(`Version: ${depVersion('../..')}`);
+    log.push(`Browser: ${browser}\n`);
     for (const dep of [
       ...Object.keys(pkg.dependencies),
       ...Object.keys(pkg.peerDependencies),
