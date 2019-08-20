@@ -345,10 +345,10 @@ class Client extends BaseClient {
     log.push(`Guilds: ${this.guilds.size} (${this.guilds.filter(guild => guild.available).size} available)`);
     log.push(`Channels: ${this.channels.size}`);
     log.push(`Users: ${this.users.size}`);
-    log.push(`Uptime: ${this.uptime}ms\n`);
+    log.push(`Uptime: ${this.uptime}ms`);
 
     if (!browser) {
-      log.push(`Memory Usage: ${JSON.stringify(process.memoryUsage())}\n`);
+      log.push(`Memory Usage: ${JSON.stringify(process.memoryUsage())}`);
     }
 
     log.push(`Gateway: ${this.ws.gateway}`);
