@@ -2,7 +2,6 @@
 'use strict';
 
 const Discord = require('../');
-const ytdl = require('ytdl-core');
 const prism = require('prism-media');
 const fs = require('fs');
 
@@ -15,8 +14,6 @@ client.login(auth.token).then(() => console.log('logged')).catch(console.error);
 const connections = new Map();
 
 var d, b;
-
-client.on('debug', console.log);
 client.on('error', console.log);
 
 async function wait(time = 1000) {
@@ -26,6 +23,11 @@ async function wait(time = 1000) {
 }
 
 var count = 0;
+
+
+client.on('ready', () => {
+  console.log(client.generateDebugLog());
+})
 
 process.on('unhandledRejection', console.log);
 

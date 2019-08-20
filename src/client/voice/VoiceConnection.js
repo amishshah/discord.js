@@ -125,6 +125,8 @@ class VoiceConnection extends EventEmitter {
      * @type {VoiceReceiver}
      */
     this.receiver = new VoiceReceiver(this);
+
+    this._debugLog = [];
   }
 
   /**
@@ -143,6 +145,10 @@ class VoiceConnection extends EventEmitter {
    */
   get dispatcher() {
     return this.player.dispatcher;
+  }
+
+  _debug(message, log = true) {
+    if (log) this._debugLog.push([Date.now(), message]);
   }
 
   /**
