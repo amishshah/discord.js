@@ -56,7 +56,7 @@ class Util {
    * @returns {string[]}
    */
   static splitMessage(text, { maxLength = 2000, char = '\n', prepend = '', append = '' } = {}) {
-    text = this.resolveString(text);
+    text = Util.resolveString(text);
     if (text.length <= maxLength) return [text];
     const splitText = text.split(char);
     if (splitText.some(chunk => chunk.length > maxLength)) throw new RangeError('SPLIT_MAX_LEN');
@@ -432,7 +432,7 @@ class Util {
    * @returns {Collection}
    */
   static discordSort(collection) {
-    return collection.sort((a, b) =>
+    return collection.sorted((a, b) =>
       a.rawPosition - b.rawPosition ||
       parseInt(b.id.slice(0, -10)) - parseInt(a.id.slice(0, -10)) ||
       parseInt(b.id.slice(10)) - parseInt(a.id.slice(10))

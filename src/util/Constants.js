@@ -28,7 +28,7 @@ const browser = exports.browser = typeof window !== 'undefined';
  * corresponding websocket events
  * @property {number} [restTimeOffset=500] Extra time in millseconds to wait before continuing to make REST
  * requests (higher values will reduce rate-limiting errors on bad connections)
- * @property {number} [restRequestTimeout=15000] Time to wait before cancelling a REST request
+ * @property {number} [restRequestTimeout=15000] Time to wait before cancelling a REST request, in milliseconds
  * @property {number} [restSweepInterval=60] How frequently to delete inactive request buckets, in seconds
  * (or 0 for never)
  * @property {number} [retryLimit=1] How many times to retry on 5XX errors (Infinity for indefinite amount of retries)
@@ -264,11 +264,11 @@ exports.Events = {
   ERROR: 'error',
   WARN: 'warn',
   DEBUG: 'debug',
-  SHARD_DISCONNECTED: 'shardDisconnected',
+  SHARD_DISCONNECT: 'shardDisconnect',
   SHARD_ERROR: 'shardError',
   SHARD_RECONNECTING: 'shardReconnecting',
   SHARD_READY: 'shardReady',
-  SHARD_RESUMED: 'shardResumed',
+  SHARD_RESUME: 'shardResume',
   INVALIDATED: 'invalidated',
   RAW: 'raw',
 };
@@ -386,6 +386,7 @@ exports.WSEvents = keyMirror([
  * * USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1
  * * USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2
  * * USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3
+ * * CHANNEL_FOLLOW_ADD
  * @typedef {string} MessageType
  */
 exports.MessageTypes = [
@@ -401,6 +402,7 @@ exports.MessageTypes = [
   'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_1',
   'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_2',
   'USER_PREMIUM_GUILD_SUBSCRIPTION_TIER_3',
+  'CHANNEL_FOLLOW_ADD',
 ];
 
 /**
@@ -466,6 +468,23 @@ exports.Colors = {
 };
 
 /**
+ * The value set for the verification levels for a guild:
+ * * None
+ * * Low
+ * * Medium
+ * * (╯°□°）╯︵ ┻━┻
+ * * ┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻
+ * @typedef {string} VerificationLevel
+ */
+exports.VerificationLevels = [
+  'None',
+  'Low',
+  'Medium',
+  '(╯°□°）╯︵ ┻━┻',
+  '┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻',
+];
+
+/**
  * An error encountered while performing an API request. Here are the potential errors:
  * * UNKNOWN_ACCOUNT
  * * UNKNOWN_APPLICATION
@@ -489,7 +508,10 @@ exports.Colors = {
  * * MAXIMUM_PINS
  * * MAXIMUM_ROLES
  * * MAXIMUM_REACTIONS
+ * * MAXIMUM_CHANNELS
+ * * MAXIMUM_INVITES
  * * UNAUTHORIZED
+ * * USER_BANNED
  * * MISSING_ACCESS
  * * INVALID_ACCOUNT_TYPE
  * * CANNOT_EXECUTE_ON_DM
@@ -509,9 +531,13 @@ exports.Colors = {
  * * CANNOT_PIN_MESSAGE_IN_OTHER_CHANNEL
  * * INVALID_OR_TAKEN_INVITE_CODE
  * * CANNOT_EXECUTE_ON_SYSTEM_MESSAGE
+ * * INVALID_OAUTH_TOKEN
  * * BULK_DELETE_MESSAGE_TOO_OLD
+ * * INVALID_FORM_BODY
  * * INVITE_ACCEPTED_TO_GUILD_NOT_CONTAINING_BOT
+ * * INVALID_API_VERSION
  * * REACTION_BLOCKED
+ * * RESOURCE_OVERLOADED
  * @typedef {string} APIError
  */
 exports.APIErrors = {
@@ -537,7 +563,10 @@ exports.APIErrors = {
   MAXIMUM_PINS: 30003,
   MAXIMUM_ROLES: 30005,
   MAXIMUM_REACTIONS: 30010,
+  MAXIMUM_CHANNELS: 30013,
+  MAXIMUM_INVITES: 30016,
   UNAUTHORIZED: 40001,
+  USER_BANNED: 40007,
   MISSING_ACCESS: 50001,
   INVALID_ACCOUNT_TYPE: 50002,
   CANNOT_EXECUTE_ON_DM: 50003,
@@ -557,9 +586,13 @@ exports.APIErrors = {
   CANNOT_PIN_MESSAGE_IN_OTHER_CHANNEL: 50019,
   INVALID_OR_TAKEN_INVITE_CODE: 50020,
   CANNOT_EXECUTE_ON_SYSTEM_MESSAGE: 50021,
+  INVALID_OAUTH_TOKEN: 50025,
   BULK_DELETE_MESSAGE_TOO_OLD: 50034,
+  INVALID_FORM_BODY: 50035,
   INVITE_ACCEPTED_TO_GUILD_NOT_CONTAINING_BOT: 50036,
+  INVALID_API_VERSION: 50041,
   REACTION_BLOCKED: 90001,
+  RESOURCE_OVERLOADED: 130000,
 };
 
 /**

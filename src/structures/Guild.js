@@ -149,18 +149,17 @@ class Guild extends Base {
     /**
      * An array of enabled guild features, here are the possible values:
      * * ANIMATED_ICON
-     * * COMMERCE
-     * * LURKABLE
-     * * PARTNERED
-     * * NEWS
      * * BANNER
-     * * INVITE_SPLASH
-     * * MORE_EMOJI
-     * * VERIFIED
-     * * VIP_REGIONS
-     * * VANITY_URL
+     * * COMMERCE
      * * DISCOVERABLE
      * * FEATURABLE
+     * * INVITE_SPLASH
+     * * PUBLIC
+     * * NEWS
+     * * PARTNERED
+     * * VANITY_URL
+     * * VERIFIED
+     * * VIP_REGIONS
      * @typedef {string} Features
      */
 
@@ -402,6 +401,15 @@ class Guild extends Base {
    */
   get joinedAt() {
     return new Date(this.joinedTimestamp);
+  }
+
+  /**
+   * If this guild is partnered
+   * @type {boolean}
+   * @readonly
+   */
+  get partnered() {
+    return this.features.includes('PARTNERED');
   }
 
   /**
